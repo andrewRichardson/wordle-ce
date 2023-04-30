@@ -19,7 +19,6 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "eject": "react-scripts eject",
     "lint-code": "tsc --noEmit && eslint src/**/*.{js,jsx,ts,tsx}",
     "lint-code:fix": "prettier --write src/**/*.{js,jsx,ts,tsx}",
     "lint-styles": "stylelint src/**/*.css",
