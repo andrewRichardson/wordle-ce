@@ -4,6 +4,6 @@
 
 <br />
 
-![Latest Build](https://github.com/github/docs/actions/workflows/main.yml/badge.svg)
+![Latest Build](https://github.com/andrewRichardson/wordle-dupe/actions/workflows/main.yml/badge.svg)
 
 _Build with [Create React App](./create-react-app.md)._
