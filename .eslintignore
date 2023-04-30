@@ -24,3 +24,4 @@ yarn-error.log*
 
 # ignore config files
 *.config.js
+*.config.ts

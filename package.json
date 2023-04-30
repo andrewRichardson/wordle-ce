@@ -4,9 +4,9 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.1.1",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -18,7 +18,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test",
+    "test": "craco test --watchAll=false --coverage",
+    "lint": "yarn lint-code && yarn lint-styles",
     "lint-code": "tsc --noEmit && eslint src/**/*.{js,jsx,ts,tsx}",
     "lint-code:fix": "prettier --write src/**/*.{js,jsx,ts,tsx}",
     "lint-styles": "stylelint src/**/*.css",
@@ -43,8 +44,8 @@
     "autoprefixer": "10.4.5"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.5.1",
-    "@tailwindcss/postcss7-compat": "^2.1.2",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/postcss7-compat": "^2.2.17",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.0.0",
     "@types/react": "^17.0.0",
@@ -70,9 +71,32 @@
     "stylelint-config-recommended": "^5.0.0",
     "stylelint-config-standard": "^22.0.0",
     "stylelint-prettier": "^1.2.0",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17"
   },
   "browser": {
     "crypto": false
+  },
+  "jest": {
+    "clearMocks": true,
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "src/index.tsx",
+      "src/assets/colorPalette.ts",
+      ".mock.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 20,
+        "functions": 30,
+        "lines": 50,
+        "statements": 50
+      }
+    },
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ]
   }
 }
