@@ -18,7 +18,7 @@ enum GameState {
 
 const Grid = styled.div`
   display: grid;
-  margin-top: 15rem;
+  margin: auto 0;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
   grid-auto-rows: minmax(1rem, auto);
