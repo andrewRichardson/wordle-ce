@@ -4,7 +4,7 @@
 
 <br />
 
-![Latest Build](https://github.com/andrewRichardson/wordle-dupe/actions/workflows/main.yml/badge.svg)
+![Latest Build](https://github.com/andrewRichardson/wordle-dupe/actions/workflows/build.yml/badge.svg)
 
 <img src="./wordle-dupe.png" alt="wordle dupe">
 
