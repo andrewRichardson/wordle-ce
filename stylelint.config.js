@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['stylelint-prettier/recommended'],
+  extends: ['stylelint-prettier'],
   rules: {
     'at-rule-no-unknown': [
       true,
@@ -10,7 +10,5 @@ module.exports = {
     'declaration-block-trailing-semicolon': null,
     'no-descending-specificity': null,
     'color-no-invalid-hex': true,
-    'max-empty-lines': 2,
-    'declaration-colon-space-after': 'always',
   },
 };
