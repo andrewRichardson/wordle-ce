@@ -61,7 +61,7 @@ const LetterSquare = styled.div<{ row: number; col: number; eval?: Evaluation }>
   `}
 `;
 
-const App = () => {
+const Wordle = () => {
   const [answer, setAnswer] = useState<string>('');
   const [guesses, setGuesses] = useState<string[]>([]);
   const [evaluations, setEvaluations] = useState<Evaluation[][]>([]);
@@ -187,4 +187,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Wordle;
