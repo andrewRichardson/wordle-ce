@@ -6,4 +6,6 @@
 
 ![Latest Build](https://github.com/andrewRichardson/wordle-dupe/actions/workflows/main.yml/badge.svg)
 
+<img src="./wordle-dupe.png" alt="wordle dupe">
+
 _Build with [Create React App](./create-react-app.md)._
