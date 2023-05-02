@@ -13,7 +13,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-links:
+  build-and-test:
+    if: "!contains(github.event.head_commit.message, '[skip]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
