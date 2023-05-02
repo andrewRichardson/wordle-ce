@@ -146,6 +146,7 @@ const Wordle = () => {
   useEffect(() => {
     if (answer === '') {
       const random = Math.floor(Math.random() * words.length - 1);
+
       setAnswer(words[random]);
     }
   }, [setAnswer, answer]);
