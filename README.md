@@ -6,9 +6,9 @@
 
 ![Latest Build](https://github.com/andrewRichardson/wordle-dupe/actions/workflows/build.yml/badge.svg)
 
-<a href="https://andrewrichardson.github.io/wordle-dupe/"><img src="./wordle-dupe.png" alt="wordle dupe"></a>
+<a href="https://andrewrichardson.github.io/wordle-dupe/" target="_blank" rel="noopener noreferrer"><img src="./wordle-dupe.png" alt="wordle dupe"></a>
 
-[https://andrewrichardson.github.io/wordle-dupe/](https://andrewrichardson.github.io/wordle-dupe/)
+<a href="https://andrewrichardson.github.io/wordle-dupe/" target="_blank" rel="noopener noreferrer">https://andrewrichardson.github.io/wordle-dupe/</a>
 
 <br />
 
