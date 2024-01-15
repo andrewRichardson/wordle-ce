@@ -162,7 +162,7 @@ const Wordle = () => {
               <LetterSquare key={uuidv4()} row={row} col={col} eval={evaluations[row][col]}>
                 {letter}
               </LetterSquare>
-            ))
+            )),
           )}
           {guesses.length < MAX_GUESSES && (
             <>
@@ -179,7 +179,7 @@ const Wordle = () => {
           {BLANK_ROWS_PLACEHOLDER.map((_, row) =>
             BLANK_WORD_SPACES_PLACEHOLDER.map((__, col) => (
               <LetterSquare key={uuidv4()} row={row + guesses.length + 1} col={col} />
-            ))
+            )),
           )}
         </Grid>
       </header>
