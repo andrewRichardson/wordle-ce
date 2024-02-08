@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import words from '../data/words';
-
-enum Evaluation {
-  CORRECT = 'correct',
-  PRESENT = 'present',
-  VALID_LETTER = 'valid',
-  WRONG = 'wrong',
-}
-
-enum GameState {
-  PLAYING = 'playing',
-  WON = 'won',
-  LOST = 'lost',
-}
+import words from '../data/words.json';
+import { GuessRow } from './GuessRow';
+import { Evaluation, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
+import { Keyboard } from './Keyboard';
 
 const Grid = styled.div`
   display: grid;
@@ -24,58 +14,15 @@ const Grid = styled.div`
   grid-auto-rows: minmax(1rem, auto);
 `;
 
-const LetterSquare = styled.div<{ row: number; col: number; eval?: Evaluation }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  background: transparent;
-  border: 2px solid #3a3a3c;
-  grid-column: ${(props) => props.col + 1};
-  grid-row: ${(props) => props.row + 1};
-  font-weight: bold;
-
-  ${(props) =>
-    props.eval === Evaluation.CORRECT &&
-    `
-    background: #538d4e;
-    border: none;
-  `}
-  ${(props) =>
-    props.eval === Evaluation.PRESENT &&
-    `
-    border: 2px solid #565758;
-  `}
-  ${(props) =>
-    props.eval === Evaluation.VALID_LETTER &&
-    `
-    background: #b59f3b;
-    border: none;
-  `}
-  ${(props) =>
-    props.eval === Evaluation.WRONG &&
-    `
-    background: #3a3a3c;
-    border: none;
-  `}
-`;
-
-const Wordle = () => {
+export const Wordle = () => {
   const [answer, setAnswer] = useState<string>('');
   const [guesses, setGuesses] = useState<string[]>([]);
+  const [keys, setKeys] = useState<Map<string, Evaluation>>(new Map());
   const [evaluations, setEvaluations] = useState<Evaluation[][]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>('');
   const [gameState, setGameState] = useState<GameState>(GameState.PLAYING);
-
-  const WORD_LENGTH = 5;
-  const MAX_GUESSES = 6;
   const BLANK_ROWS = MAX_GUESSES - 1 - guesses.length;
   const BLANK_GUESS_SPACES = WORD_LENGTH - currentGuess.length;
-
-  const BLANK_GUESS_SPACES_PLACEHOLDER = BLANK_GUESS_SPACES > 0 ? new Array(BLANK_GUESS_SPACES).fill('') : [];
-  const BLANK_ROWS_PLACEHOLDER = BLANK_ROWS > 0 ? new Array(BLANK_ROWS).fill('') : [];
-  const BLANK_WORD_SPACES_PLACEHOLDER = new Array(WORD_LENGTH).fill('');
 
   const evaluateGuess = (guess: string) => {
     if (!words.includes(guess)) {
@@ -90,11 +37,15 @@ const Wordle = () => {
     const answerLetters = answer.split('');
     let numCorrect = 0;
 
+    const keyMap = new Map(keys);
+
     for (let i = 0; i < guess.length; i += 1) {
+      keyMap.set(guess.charAt(i), Evaluation.WRONG);
       if (guess.charAt(i) === answerLetters[i]) {
         evaluation[i] = Evaluation.CORRECT;
         answerLetters[i] = '';
         numCorrect += 1;
+        keyMap.set(guess.charAt(i), Evaluation.CORRECT);
       }
     }
 
@@ -110,8 +61,10 @@ const Wordle = () => {
       if (index !== -1) {
         evaluation[i] = Evaluation.VALID_LETTER;
         answerLetters[index] = '';
+        keyMap.set(guess.charAt(i), Evaluation.VALID_LETTER);
       }
     }
+    setKeys(keyMap);
 
     if (guesses.length === MAX_GUESSES - 1) {
       setGameState(GameState.LOST);
@@ -157,34 +110,18 @@ const Wordle = () => {
           Wordle <i className="text-base">(custom edition)</i>
         </h1>
         <Grid>
-          {guesses.map((guess, row) =>
-            guess.split('').map((letter, col) => (
-              <LetterSquare key={uuidv4()} row={row} col={col} eval={evaluations[row][col]}>
-                {letter}
-              </LetterSquare>
-            )),
-          )}
+          {guesses.map((guess, row) => (
+            <GuessRow key={uuidv4()} guess={guess} evaluations={evaluations} row={row} />
+          ))}
           {guesses.length < MAX_GUESSES && (
-            <>
-              {currentGuess.split('').map((letter, col) => (
-                <LetterSquare key={uuidv4()} row={guesses.length} col={col} eval={Evaluation.PRESENT}>
-                  {letter}
-                </LetterSquare>
-              ))}
-              {BLANK_GUESS_SPACES_PLACEHOLDER.map((_, col) => (
-                <LetterSquare key={uuidv4()} row={guesses.length} col={col + currentGuess.length} />
-              ))}
-            </>
+            <GuessRow guess={currentGuess} evaluations={evaluations} row={guesses.length} />
           )}
-          {BLANK_ROWS_PLACEHOLDER.map((_, row) =>
-            BLANK_WORD_SPACES_PLACEHOLDER.map((__, col) => (
-              <LetterSquare key={uuidv4()} row={row + guesses.length + 1} col={col} />
-            )),
-          )}
+          {new Array(BLANK_ROWS).fill('').map((_, row) => (
+            <GuessRow key={uuidv4()} guess="" row={row + guesses.length + 1} />
+          ))}
         </Grid>
+        <Keyboard keys={keys} />
       </header>
     </div>
   );
 };
-
-export default Wordle;
