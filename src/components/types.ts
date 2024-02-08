@@ -1,8 +1,8 @@
 export enum Evaluation {
-  CORRECT = 'correct',
-  PRESENT = 'present',
-  VALID_LETTER = 'valid',
-  WRONG = 'wrong',
+  CORRECT = 3,
+  PRESENT = 2,
+  VALID_LETTER = 1,
+  WRONG = 0,
 }
 
 export enum GameState {
