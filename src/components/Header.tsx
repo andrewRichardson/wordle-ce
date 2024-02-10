@@ -23,26 +23,29 @@ const HeaderContainer = styled.header`
   @media (min-width: 768px) {
     padding: 1rem 0;
     justify-content: center;
-    h1 {
-      flex-grow: 1;
-    }
+  }
+`;
+
+const SubHeader = styled.i`
+  font-size: 1rem;
+  line-height: 1.5rem;
+  align-self: center;
+`;
+
+const HeaderButtonContainer = styled.div`
+  @media (min-width: 768px) {
+    position: absolute;
+    right: 3rem;
+    gap: 2rem;
   }
 
-  & > div {
-    @media (min-width: 768px) {
-      position: absolute;
-      right: 3rem;
-      gap: 2rem;
-    }
-
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-  }
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 `;
 
 type HeaderProps = {
@@ -54,16 +57,16 @@ export const Header = ({ resetGame }: HeaderProps) => {
   return (
     <HeaderContainer>
       <h1>
-        Wordle <i className="text-base">(custom edition)</i>
+        Wordle <SubHeader>(custom edition)</SubHeader>
       </h1>
-      <div>
+      <HeaderButtonContainer>
         <div onClick={resetGame}>
           <Refresh color="white" />
         </div>
         <div onClick={() => console.log(stats)}>
           <Stats color="white" />
         </div>
-      </div>
+      </HeaderButtonContainer>
     </HeaderContainer>
   );
 };
