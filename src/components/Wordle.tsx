@@ -1,91 +1,115 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { v4 as uuidv4 } from 'uuid';
-import words from '../data/words';
+import words from '../data/words.json';
+import { GuessRow } from './GuessRow';
+import { Evaluation, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
+import { Keyboard } from './Keyboard';
+import { Refresh } from '../assets/Refresh';
+import { useStats } from '../hooks/useStats';
+import { Stats } from '../assets/Stats';
 
-enum Evaluation {
-  CORRECT = 'correct',
-  PRESENT = 'present',
-  VALID_LETTER = 'valid',
-  WRONG = 'wrong',
-}
-
-enum GameState {
-  PLAYING = 'playing',
-  WON = 'won',
-  LOST = 'lost',
-}
-
-const Grid = styled.div`
-  display: grid;
-  margin: auto 0;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.5rem;
-  grid-auto-rows: minmax(1rem, auto);
+const GameContainer = styled.main`
+  text-align: center;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  color: white;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 `;
 
-const LetterSquare = styled.div<{ row: number; col: number; eval?: Evaluation }>`
+const Header = styled.header`
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  background: transparent;
-  border: 2px solid #3a3a3c;
-  grid-column: ${(props) => props.col + 1};
-  grid-row: ${(props) => props.row + 1};
+  padding: 1rem 0;
+  font-family: serif;
   font-weight: bold;
+  width: 100%;
+  border-bottom: 2px solid rgb(63 63 70);
 
-  ${(props) =>
-    props.eval === Evaluation.CORRECT &&
-    `
-    background: #538d4e;
-    border: none;
-  `}
-  ${(props) =>
-    props.eval === Evaluation.PRESENT &&
-    `
-    border: 2px solid #565758;
-  `}
-  ${(props) =>
-    props.eval === Evaluation.VALID_LETTER &&
-    `
-    background: #b59f3b;
-    border: none;
-  `}
-  ${(props) =>
-    props.eval === Evaluation.WRONG &&
-    `
-    background: #3a3a3c;
-    border: none;
-  `}
+  h1 {
+    flex-grow: 1;
+  }
+
+  & > div {
+    cursor: pointer;
+    position: absolute;
+    right: 3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
 `;
 
-const Wordle = () => {
+const BoardContainer = styled.div`
+  max-width: 500px;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 14rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+`;
+
+const Board = styled.div`
+  display: flex;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+`;
+
+const Grid = styled.div`
+  width: 350px;
+  height: 420px;
+  margin: 1.25rem 0;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 5px;
+  padding: 10px;
+`;
+
+const emptyBoard = [
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+];
+
+export const Wordle = () => {
   const [answer, setAnswer] = useState<string>('');
-  const [guesses, setGuesses] = useState<string[]>([]);
+  const [keys, setKeys] = useState<Map<string, Evaluation>>(new Map());
   const [evaluations, setEvaluations] = useState<Evaluation[][]>([]);
-  const [currentGuess, setCurrentGuess] = useState<string>('');
   const [gameState, setGameState] = useState<GameState>(GameState.PLAYING);
+  const { stats, addGame } = useStats();
 
-  const WORD_LENGTH = 5;
-  const MAX_GUESSES = 6;
-  const BLANK_ROWS = MAX_GUESSES - 1 - guesses.length;
-  const BLANK_GUESS_SPACES = WORD_LENGTH - currentGuess.length;
+  const [board, setBoard] = useState<string[][]>(emptyBoard.map((row) => row.map((col) => col)));
+  const [row, setRow] = useState<number>(0);
+  const [col, setCol] = useState<number>(0);
 
-  const BLANK_GUESS_SPACES_PLACEHOLDER = BLANK_GUESS_SPACES > 0 ? new Array(BLANK_GUESS_SPACES).fill('') : [];
-  const BLANK_ROWS_PLACEHOLDER = BLANK_ROWS > 0 ? new Array(BLANK_ROWS).fill('') : [];
-  const BLANK_WORD_SPACES_PLACEHOLDER = new Array(WORD_LENGTH).fill('');
+  const evaluateGuess = () => {
+    const guess = board[row].join('');
 
-  const evaluateGuess = (guess: string) => {
     if (!words.includes(guess)) {
       // eslint-disable-next-line no-alert
       window.alert(`${guess} is not a word recognized by Wordle.`);
       return;
     }
 
-    setGuesses([...guesses, currentGuess]);
-    setCurrentGuess('');
+    setRow(row + 1);
+    setCol(0);
     const evaluation = new Array(WORD_LENGTH).fill(Evaluation.WRONG);
     const answerLetters = answer.split('');
     let numCorrect = 0;
@@ -113,26 +137,56 @@ const Wordle = () => {
       }
     }
 
-    if (guesses.length === MAX_GUESSES - 1) {
+    if (row === MAX_GUESSES - 1) {
       setGameState(GameState.LOST);
     }
     setEvaluations([...evaluations, evaluation]);
+
+    evaluation.forEach((evaluation: Evaluation, index: number) => {
+      const key = guess[index];
+      const currentEval = keys.get(key) ?? 0;
+      if (currentEval === undefined || currentEval > evaluation) return;
+
+      keys.set(key, evaluation);
+    });
+
+    setKeys(new Map(keys));
   };
 
-  const handleInput = (e: KeyboardEvent) => {
-    if (gameState !== GameState.PLAYING || e.ctrlKey) return;
+  const updateGuess = (key: string) => {
+    if (key === 'Backspace') {
+      board[row][col] = '';
+      if (board[row]?.[col - 1]) board[row][col - 1] = '';
 
-    if (e.key === 'Backspace') {
-      setCurrentGuess(currentGuess.substring(0, currentGuess.length - 1));
+      setBoard([...board]);
+      setCol(Math.max(col - 1, 0));
     }
-    if (e.key.length === 1 && /[a-z]/i.test(e.key.toLowerCase())) {
-      if (BLANK_GUESS_SPACES > 0) {
-        setCurrentGuess(currentGuess + e.key.toUpperCase());
+    if (key.length === 1 && /[a-z]/i.test(key.toLowerCase())) {
+      if (col < WORD_LENGTH) {
+        board[row][col] = key.toUpperCase();
+        setBoard([...board]);
+        setCol(col + 1);
       }
     }
-    if (e.key === 'Enter' && currentGuess.length === WORD_LENGTH) {
-      evaluateGuess(currentGuess);
+    if (key === 'Enter' && col === WORD_LENGTH) {
+      evaluateGuess();
     }
+  };
+
+  const handleInput = (e: KeyboardEvent | string) => {
+    if (gameState !== GameState.PLAYING || (typeof e !== 'string' && e.ctrlKey)) return;
+
+    updateGuess(typeof e === 'string' ? e : e.key);
+  };
+
+  const resetGame = () => {
+    setAnswer('');
+    setKeys(new Map());
+    setEvaluations([]);
+    setBoard(emptyBoard.map((row) => row.map((col) => col)));
+    setRow(0);
+    setCol(0);
+    setGameState(GameState.PLAYING);
   };
 
   useEffect(() => {
@@ -150,41 +204,38 @@ const Wordle = () => {
     }
   }, [setAnswer, answer]);
 
+  useEffect(() => {
+    if (gameState !== GameState.PLAYING) {
+      const newStats = addGame(gameState === GameState.WON, row);
+      console.log(newStats);
+    }
+  }, [gameState]);
+
   return (
-    <div className="text-center">
-      <header className="min-h-screen flex flex-col items-center justify-start text-white text-3xl">
-        <h1 className="mb-5 font-serif font-bold p-4 w-screen border-b-2 border-gray-700">
+    <GameContainer>
+      <Header>
+        <h1>
           Wordle <i className="text-base">(custom edition)</i>
         </h1>
-        <Grid>
-          {guesses.map((guess, row) =>
-            guess.split('').map((letter, col) => (
-              <LetterSquare key={uuidv4()} row={row} col={col} eval={evaluations[row][col]}>
-                {letter}
-              </LetterSquare>
-            )),
-          )}
-          {guesses.length < MAX_GUESSES && (
-            <>
-              {currentGuess.split('').map((letter, col) => (
-                <LetterSquare key={uuidv4()} row={guesses.length} col={col} eval={Evaluation.PRESENT}>
-                  {letter}
-                </LetterSquare>
-              ))}
-              {BLANK_GUESS_SPACES_PLACEHOLDER.map((_, col) => (
-                <LetterSquare key={uuidv4()} row={guesses.length} col={col + currentGuess.length} />
-              ))}
-            </>
-          )}
-          {BLANK_ROWS_PLACEHOLDER.map((_, row) =>
-            BLANK_WORD_SPACES_PLACEHOLDER.map((__, col) => (
-              <LetterSquare key={uuidv4()} row={row + guesses.length + 1} col={col} />
-            )),
-          )}
-        </Grid>
-      </header>
-    </div>
+        <div>
+          <div onClick={() => gameState !== GameState.PLAYING && resetGame()}>
+            <Refresh color={gameState !== GameState.PLAYING ? 'white' : 'gray'} />
+          </div>
+          <div onClick={() => console.log(stats)}>
+            <Stats color="white" />
+          </div>
+        </div>
+      </Header>
+      <BoardContainer>
+        <Board>
+          <Grid>
+            {board.map((word, row) => (
+              <GuessRow key={uuidv4()} guess={word.join('')} evaluations={evaluations?.[row]} />
+            ))}
+          </Grid>
+        </Board>
+        <Keyboard keys={keys} onPress={(key) => handleInput(key)} />
+      </BoardContainer>
+    </GameContainer>
   );
 };
-
-export default Wordle;
