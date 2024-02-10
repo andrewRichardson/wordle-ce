@@ -66,6 +66,10 @@ const BoardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: start;
+
+  @media (max-height: 1000px) {
+    padding-bottom: 1rem;
+  }
 `;
 
 const Board = styled.div`

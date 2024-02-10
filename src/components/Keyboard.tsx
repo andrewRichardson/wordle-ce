@@ -10,6 +10,10 @@ const KeyContainer = styled.div`
   align-items: center;
   width: 100%;
   margin: 0 8px;
+
+  @media (max-height: 768px) {
+    display: none;
+  }
 `;
 
 const KeyRow = styled.div`
