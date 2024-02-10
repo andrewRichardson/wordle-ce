@@ -17,6 +17,7 @@ const HeaderContainer = styled.header`
 
   @media (max-height: 1000px) {
     height: 40px;
+    border-bottom: 1px solid rgb(63 63 70);
   }
 
   @media (min-width: 768px) {
@@ -31,6 +32,7 @@ const HeaderContainer = styled.header`
     @media (min-width: 768px) {
       position: absolute;
       right: 3rem;
+      gap: 2rem;
     }
 
     position: relative;
@@ -39,7 +41,7 @@ const HeaderContainer = styled.header`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
+    gap: 1rem;
   }
 `;
 
