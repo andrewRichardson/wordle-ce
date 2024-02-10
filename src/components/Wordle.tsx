@@ -11,7 +11,7 @@ import { Stats } from '../assets/Stats';
 
 const GameContainer = styled.main`
   text-align: center;
-  height: 100vh;
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
