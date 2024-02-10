@@ -11,7 +11,7 @@ import { Stats } from '../assets/Stats';
 
 const GameContainer = styled.main`
   text-align: center;
-  height: 100%;
+  height: calc(100% - 200px);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -33,6 +33,10 @@ const Header = styled.header`
   height: 70px;
   width: 100%;
   border-bottom: 2px solid rgb(63 63 70);
+
+  @media (max-height: 1000px) {
+    height: 40px;
+  }
 
   @media (min-width: 768px) {
     padding: 1rem 0;
@@ -62,14 +66,13 @@ const BoardContainer = styled.div`
   max-width: 500px;
   width: 100%;
   height: calc(100% - 70px);
-  padding-bottom: 14rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: start;
 
   @media (max-height: 1000px) {
-    padding-bottom: 1rem;
+    height: calc(100% - 40px);
   }
 `;
 
@@ -85,11 +88,23 @@ const Board = styled.div`
 const Grid = styled.div`
   width: 350px;
   height: 420px;
+  max-height: 100%;
   margin: 1.25rem 0;
   display: grid;
   grid-template-rows: repeat(6, 1fr);
   gap: 5px;
   padding: 10px;
+  box-sizing: border-box;
+
+  @media (max-height: 1000px) {
+    margin: 0;
+    width: 330px;
+    height: 400px;
+  }
+  @media (max-height: 768px) {
+    width: 300px;
+    height: 360px;
+  }
 `;
 
 const emptyBoard = [
