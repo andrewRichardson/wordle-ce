@@ -30,6 +30,7 @@ const Header = styled.header`
   padding: 1rem 1rem;
   font-family: serif;
   font-weight: bold;
+  height: 70px;
   width: 100%;
   border-bottom: 2px solid rgb(63 63 70);
 
@@ -60,7 +61,7 @@ const Header = styled.header`
 const BoardContainer = styled.div`
   max-width: 500px;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 70px);
   padding-bottom: 14rem;
   display: flex;
   flex-direction: column;

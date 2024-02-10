@@ -10,6 +10,7 @@ const KeyContainer = styled.div`
   align-items: center;
   width: 100%;
   margin: 0 8px;
+  padding: 0 0.5rem;
 
   @media (max-height: 768px) {
     display: none;
