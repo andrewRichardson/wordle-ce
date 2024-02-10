@@ -13,3 +13,6 @@ export enum GameState {
 
 export const WORD_LENGTH = 5;
 export const MAX_GUESSES = 6;
+export const GAMEOVER_DELAY = 300;
+
+export const STORAGE_KEY = 'wordle-ce-statistics';

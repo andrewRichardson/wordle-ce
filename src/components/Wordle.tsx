@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import words from '../data/words.json';
-import { Evaluation, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
+import { Evaluation, GAMEOVER_DELAY, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
 import { Keyboard } from './Keyboard';
 import { useStats } from '../hooks/useStats';
 import { Header } from './Header';
@@ -73,34 +73,41 @@ export const Wordle = () => {
     setRow(row + 1);
     setCol(0);
     const evaluation = new Array(WORD_LENGTH).fill(Evaluation.WRONG);
+    const answerLetterMap = new Map();
     const answerLetters = answer.split('');
+    answerLetters.forEach((letter) => answerLetterMap.set(letter, (answerLetterMap.get(letter) ?? 0) + 1));
+
+    console.log(answer, answerLetters, answerLetterMap);
+
     let numCorrect = 0;
 
     for (let i = 0; i < guess.length; i += 1) {
-      if (guess.charAt(i) === answerLetters[i]) {
+      const letter = guess.charAt(i);
+      console.log(letter, answerLetters[i], letter === answerLetters[i]);
+      if (letter === answerLetters[i]) {
+        const lettersLeft = answerLetterMap.get(letter);
+        if (lettersLeft && lettersLeft > 0) answerLetterMap.set(letter, lettersLeft - 1);
+        else answerLetterMap.delete(letter);
+
         evaluation[i] = Evaluation.CORRECT;
-        answerLetters[i] = '';
         numCorrect += 1;
       }
     }
 
     if (numCorrect === WORD_LENGTH) {
-      setGameState(GameState.WON);
       setEvaluations([...evaluations, evaluation]);
+      setGameState(GameState.WON);
       return;
     }
 
     for (let i = 0; i < guess.length; i += 1) {
-      const index = answerLetters.indexOf(guess.charAt(i));
+      const letter = guess.charAt(i);
 
-      if (index !== -1) {
+      const lettersLeft = answerLetterMap.get(letter);
+      if (lettersLeft && lettersLeft > 0 && evaluation[i] === Evaluation.WRONG) {
+        answerLetterMap.set(letter, lettersLeft - 1);
         evaluation[i] = Evaluation.VALID_LETTER;
-        answerLetters[index] = '';
-      }
-    }
-
-    if (row === MAX_GUESSES - 1) {
-      setGameState(GameState.LOST);
+      } else answerLetterMap.delete(letter);
     }
     setEvaluations([...evaluations, evaluation]);
 
@@ -113,6 +120,10 @@ export const Wordle = () => {
     });
 
     setKeys(new Map(keys));
+
+    if (row === MAX_GUESSES - 1) {
+      setGameState(GameState.LOST);
+    }
   };
 
   const updateGuess = (key: string) => {
@@ -136,7 +147,11 @@ export const Wordle = () => {
   };
 
   const handleInput = (e: KeyboardEvent | string) => {
-    if (gameState !== GameState.PLAYING || (typeof e !== 'string' && e.ctrlKey)) return;
+    if (typeof e !== 'string' && e.ctrlKey) return;
+    if (gameState !== GameState.PLAYING) {
+      if (typeof e !== 'string' && e.key === 'Enter') resetGame();
+      return;
+    }
 
     updateGuess(typeof e === 'string' ? e : e.key);
   };
@@ -161,15 +176,14 @@ export const Wordle = () => {
 
   useEffect(() => {
     if (answer === '') {
-      const random = Math.floor(Math.random() * words.length - 1);
-      setAnswer(words[random]);
+      // const random = Math.floor(Math.random() * words.length - 1);
+      setAnswer('MAMMA');
     }
   }, [setAnswer, answer]);
 
   useEffect(() => {
     if (gameState !== GameState.PLAYING) {
-      const newStats = addGame(gameState === GameState.WON, row);
-      console.log(newStats);
+      setTimeout(() => addGame(gameState === GameState.WON, row), GAMEOVER_DELAY);
     }
   }, [gameState]);
 
