@@ -77,13 +77,10 @@ export const Wordle = () => {
     const answerLetters = answer.split('');
     answerLetters.forEach((letter) => answerLetterMap.set(letter, (answerLetterMap.get(letter) ?? 0) + 1));
 
-    console.log(answer, answerLetters, answerLetterMap);
-
     let numCorrect = 0;
 
     for (let i = 0; i < guess.length; i += 1) {
       const letter = guess.charAt(i);
-      console.log(letter, answerLetters[i], letter === answerLetters[i]);
       if (letter === answerLetters[i]) {
         const lettersLeft = answerLetterMap.get(letter);
         if (lettersLeft && lettersLeft > 0) answerLetterMap.set(letter, lettersLeft - 1);
@@ -176,8 +173,8 @@ export const Wordle = () => {
 
   useEffect(() => {
     if (answer === '') {
-      // const random = Math.floor(Math.random() * words.length - 1);
-      setAnswer('MAMMA');
+      const random = Math.floor(Math.random() * words.length - 1);
+      setAnswer(words[random]);
     }
   }, [setAnswer, answer]);
 
