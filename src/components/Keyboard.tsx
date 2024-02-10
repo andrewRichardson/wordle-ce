@@ -38,22 +38,22 @@ const BaseKey = styled.div`
   fill: white;
 `;
 
-const KeyButton = styled(BaseKey)<{ eval?: Evaluation }>`
+const KeyButton = styled(BaseKey)<{ $eval?: Evaluation }>`
   background: #818384;
   font-size: 1.25rem;
 
   ${(props) =>
-    props.eval === Evaluation.CORRECT &&
+    props.$eval === Evaluation.CORRECT &&
     `
     background: #538d4e;
   `}
   ${(props) =>
-    props.eval === Evaluation.VALID_LETTER &&
+    props.$eval === Evaluation.VALID_LETTER &&
     `
     background: #b59f3b;
   `}
   ${(props) =>
-    props.eval === Evaluation.WRONG &&
+    props.$eval === Evaluation.WRONG &&
     `
     background: #3a3a3c;
   `}
@@ -86,7 +86,7 @@ export const Keyboard = ({ keys, onPress }: KeyboardProps) => {
     <KeyContainer>
       <KeyRow>
         {KeyTopRow.map((key) => (
-          <KeyButton key={uuidv4()} onClick={() => onPress(key)} eval={keys.get(key)}>
+          <KeyButton key={uuidv4()} onClick={() => onPress(key)} $eval={keys.get(key)}>
             {key}
           </KeyButton>
         ))}
@@ -94,7 +94,7 @@ export const Keyboard = ({ keys, onPress }: KeyboardProps) => {
       <KeyRow>
         <Spacer />
         {KeyMiddleRow.map((key) => (
-          <KeyButton key={uuidv4()} onClick={() => onPress(key)} eval={keys.get(key)}>
+          <KeyButton key={uuidv4()} onClick={() => onPress(key)} $eval={keys.get(key)}>
             {key}
           </KeyButton>
         ))}
@@ -103,7 +103,7 @@ export const Keyboard = ({ keys, onPress }: KeyboardProps) => {
       <KeyRow>
         <ActionButton onClick={() => onPress('Enter')}>ENTER</ActionButton>
         {KeyBottomRow.map((key) => (
-          <KeyButton key={uuidv4()} onClick={() => onPress(key)} eval={keys.get(key)}>
+          <KeyButton key={uuidv4()} onClick={() => onPress(key)} $eval={keys.get(key)}>
             {key}
           </KeyButton>
         ))}

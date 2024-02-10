@@ -8,7 +8,7 @@ const GuessRowContainer = styled.div`
   grid-gap: 5px;
 `;
 
-const GuessSquare = styled.div<{ eval?: Evaluation }>`
+const GuessSquare = styled.div<{ $eval?: Evaluation }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -25,24 +25,24 @@ const GuessSquare = styled.div<{ eval?: Evaluation }>`
   }
 
   ${(props) =>
-    props.eval === Evaluation.CORRECT &&
+    props.$eval === Evaluation.CORRECT &&
     `
     background: #538d4e;
     border: none;
   `}
   ${(props) =>
-    props.eval === Evaluation.PRESENT &&
+    props.$eval === Evaluation.PRESENT &&
     `
     border: 2px solid #565758;
   `}
   ${(props) =>
-    props.eval === Evaluation.VALID_LETTER &&
+    props.$eval === Evaluation.VALID_LETTER &&
     `
     background: #b59f3b;
     border: none;
   `}
   ${(props) =>
-    props.eval === Evaluation.WRONG &&
+    props.$eval === Evaluation.WRONG &&
     `
     background: #3a3a3c;
     border: none;
@@ -56,7 +56,7 @@ type GuessRowProps = {
 
 export const GuessRow = ({ guess, evaluations }: GuessRowProps) => {
   const guessLetters = guess.split('').map((letter, col) => (
-    <GuessSquare key={uuidv4()} eval={evaluations?.[col] ?? Evaluation.PRESENT}>
+    <GuessSquare key={uuidv4()} $eval={evaluations?.[col] ?? Evaluation.PRESENT}>
       {letter}
     </GuessSquare>
   ));

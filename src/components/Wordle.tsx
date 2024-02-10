@@ -6,6 +6,8 @@ import { GuessRow } from './GuessRow';
 import { Evaluation, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
 import { Keyboard } from './Keyboard';
 import { Refresh } from '../assets/Refresh';
+import { useStats } from '../hooks/useStats';
+import { Stats } from '../assets/Stats';
 
 const GameContainer = styled.main`
   text-align: center;
@@ -35,9 +37,15 @@ const Header = styled.header`
     flex-grow: 1;
   }
 
-  div {
+  & > div {
     cursor: pointer;
     position: absolute;
+    right: 3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
   }
 `;
 
@@ -71,26 +79,37 @@ const Grid = styled.div`
   padding: 10px;
 `;
 
+const emptyBoard = [
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+];
+
 export const Wordle = () => {
   const [answer, setAnswer] = useState<string>('');
-  const [guesses, setGuesses] = useState<string[]>([]);
   const [keys, setKeys] = useState<Map<string, Evaluation>>(new Map());
   const [evaluations, setEvaluations] = useState<Evaluation[][]>([]);
-  const [currentGuess, setCurrentGuess] = useState<string>('');
   const [gameState, setGameState] = useState<GameState>(GameState.PLAYING);
+  const { stats, addGame } = useStats();
 
-  const blankRows = MAX_GUESSES - 1 - guesses.length;
-  const blankGuessSpaces = WORD_LENGTH - currentGuess.length;
+  const [board, setBoard] = useState<string[][]>(emptyBoard.map((row) => row.map((col) => col)));
+  const [row, setRow] = useState<number>(0);
+  const [col, setCol] = useState<number>(0);
 
-  const evaluateGuess = (guess: string) => {
+  const evaluateGuess = () => {
+    const guess = board[row].join('');
+
     if (!words.includes(guess)) {
       // eslint-disable-next-line no-alert
       window.alert(`${guess} is not a word recognized by Wordle.`);
       return;
     }
 
-    setGuesses([...guesses, currentGuess]);
-    setCurrentGuess('');
+    setRow(row + 1);
+    setCol(0);
     const evaluation = new Array(WORD_LENGTH).fill(Evaluation.WRONG);
     const answerLetters = answer.split('');
     let numCorrect = 0;
@@ -118,7 +137,7 @@ export const Wordle = () => {
       }
     }
 
-    if (guesses.length === MAX_GUESSES - 1) {
+    if (row === MAX_GUESSES - 1) {
       setGameState(GameState.LOST);
     }
     setEvaluations([...evaluations, evaluation]);
@@ -136,15 +155,21 @@ export const Wordle = () => {
 
   const updateGuess = (key: string) => {
     if (key === 'Backspace') {
-      setCurrentGuess(currentGuess.substring(0, currentGuess.length - 1));
+      board[row][col] = '';
+      if (board[row]?.[col - 1]) board[row][col - 1] = '';
+
+      setBoard([...board]);
+      setCol(Math.max(col - 1, 0));
     }
     if (key.length === 1 && /[a-z]/i.test(key.toLowerCase())) {
-      if (blankGuessSpaces > 0) {
-        setCurrentGuess(currentGuess + key.toUpperCase());
+      if (col < WORD_LENGTH) {
+        board[row][col] = key.toUpperCase();
+        setBoard([...board]);
+        setCol(col + 1);
       }
     }
-    if (key === 'Enter' && currentGuess.length === WORD_LENGTH) {
-      evaluateGuess(currentGuess);
+    if (key === 'Enter' && col === WORD_LENGTH) {
+      evaluateGuess();
     }
   };
 
@@ -156,10 +181,11 @@ export const Wordle = () => {
 
   const resetGame = () => {
     setAnswer('');
-    setGuesses([]);
     setKeys(new Map());
     setEvaluations([]);
-    setCurrentGuess('');
+    setBoard(emptyBoard.map((row) => row.map((col) => col)));
+    setRow(0);
+    setCol(0);
     setGameState(GameState.PLAYING);
   };
 
@@ -178,29 +204,33 @@ export const Wordle = () => {
     }
   }, [setAnswer, answer]);
 
+  useEffect(() => {
+    if (gameState !== GameState.PLAYING) {
+      const newStats = addGame(gameState === GameState.WON, row);
+      console.log(newStats);
+    }
+  }, [gameState]);
+
   return (
     <GameContainer>
       <Header>
         <h1>
           Wordle <i className="text-base">(custom edition)</i>
         </h1>
-        {gameState !== GameState.PLAYING && (
-          <div onClick={resetGame}>
-            <Refresh color="white" />
+        <div>
+          <div onClick={() => gameState !== GameState.PLAYING && resetGame()}>
+            <Refresh color={gameState !== GameState.PLAYING ? 'white' : 'gray'} />
           </div>
-        )}
+          <div onClick={() => console.log(stats)}>
+            <Stats color="white" />
+          </div>
+        </div>
       </Header>
       <BoardContainer>
         <Board>
           <Grid>
-            {guesses.map((guess, row) => (
-              <GuessRow key={uuidv4()} guess={guess} evaluations={evaluations[row]} />
-            ))}
-            {guesses.length < MAX_GUESSES && (
-              <GuessRow guess={currentGuess} evaluations={evaluations?.[evaluations.length]} />
-            )}
-            {new Array(blankRows).fill('').map(() => (
-              <GuessRow key={uuidv4()} guess="" />
+            {board.map((word, row) => (
+              <GuessRow key={uuidv4()} guess={word.join('')} evaluations={evaluations?.[row]} />
             ))}
           </Grid>
         </Board>
