@@ -26,21 +26,29 @@ const Header = styled.header`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  padding: 1rem 0;
+  justify-content: space-between;
+  padding: 1rem 1rem;
   font-family: serif;
   font-weight: bold;
   width: 100%;
   border-bottom: 2px solid rgb(63 63 70);
 
-  h1 {
-    flex-grow: 1;
+  @media (min-width: 768px) {
+    padding: 1rem 0;
+    justify-content: center;
+    h1 {
+      flex-grow: 1;
+    }
   }
 
   & > div {
+    @media (min-width: 768px) {
+      position: absolute;
+      right: 3rem;
+    }
+
+    position: relative;
     cursor: pointer;
-    position: absolute;
-    right: 3rem;
     display: flex;
     flex-direction: row;
     align-items: center;
