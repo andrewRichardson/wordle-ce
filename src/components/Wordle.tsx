@@ -5,9 +5,8 @@ import words from '../data/words.json';
 import { GuessRow } from './GuessRow';
 import { Evaluation, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
 import { Keyboard } from './Keyboard';
-import { Refresh } from '../assets/Refresh';
 import { useStats } from '../hooks/useStats';
-import { Stats } from '../assets/Stats';
+import { Header } from './Header';
 
 const GameContainer = styled.main`
   text-align: center;
@@ -20,45 +19,9 @@ const GameContainer = styled.main`
   color: white;
   font-size: 1.875rem;
   line-height: 2.25rem;
-`;
-
-const Header = styled.header`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1rem;
-  font-family: serif;
-  font-weight: bold;
-  height: 70px;
-  width: 100%;
-  border-bottom: 2px solid rgb(63 63 70);
 
   @media (max-height: 1000px) {
-    height: 40px;
-  }
-
-  @media (min-width: 768px) {
-    padding: 1rem 0;
-    justify-content: center;
-    h1 {
-      flex-grow: 1;
-    }
-  }
-
-  & > div {
-    @media (min-width: 768px) {
-      position: absolute;
-      right: 3rem;
-    }
-
-    position: relative;
-    cursor: pointer;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
+    overflow: unset;
   }
 `;
 
@@ -70,9 +33,11 @@ const BoardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: start;
+  flex-grow: 1;
 
   @media (max-height: 1000px) {
     height: calc(100% - 40px);
+    overflow: unset;
   }
 `;
 
@@ -81,7 +46,6 @@ const Board = styled.div`
   flex-grow: 1;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   width: 100%;
 `;
 
@@ -121,7 +85,7 @@ export const Wordle = () => {
   const [keys, setKeys] = useState<Map<string, Evaluation>>(new Map());
   const [evaluations, setEvaluations] = useState<Evaluation[][]>([]);
   const [gameState, setGameState] = useState<GameState>(GameState.PLAYING);
-  const { stats, addGame } = useStats();
+  const { addGame } = useStats();
 
   const [board, setBoard] = useState<string[][]>(emptyBoard.map((row) => row.map((col) => col)));
   const [row, setRow] = useState<number>(0);
@@ -241,19 +205,7 @@ export const Wordle = () => {
 
   return (
     <GameContainer>
-      <Header>
-        <h1>
-          Wordle <i className="text-base">(custom edition)</i>
-        </h1>
-        <div>
-          <div onClick={() => gameState !== GameState.PLAYING && resetGame()}>
-            <Refresh color={gameState !== GameState.PLAYING ? 'white' : 'gray'} />
-          </div>
-          <div onClick={() => console.log(stats)}>
-            <Stats color="white" />
-          </div>
-        </div>
-      </Header>
+      <Header resetGame={resetGame} />
       <BoardContainer>
         <Board>
           <Grid>

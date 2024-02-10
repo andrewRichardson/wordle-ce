@@ -11,6 +11,7 @@ const KeyContainer = styled.div`
   width: 100%;
   margin: 0 8px;
   padding-left: 0.5rem;
+  height: 200px;
 `;
 
 const KeyRow = styled.div`
