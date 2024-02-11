@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import words from '../data/words.json';
+import answers from '../data/answers.json';
 import { Evaluation, GAMEOVER_DELAY, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
 import { Keyboard } from './Keyboard';
 import { useStats } from '../hooks/useStats';
@@ -64,7 +65,7 @@ export const Wordle = () => {
   const evaluateGuess = () => {
     const guess = board[row].join('');
 
-    if (!words.includes(guess)) {
+    if (!words.includes(guess) && !answers.includes(guess)) {
       // eslint-disable-next-line no-alert
       window.alert(`${guess} is not a word recognized by Wordle.`);
       return;
@@ -173,8 +174,8 @@ export const Wordle = () => {
 
   useEffect(() => {
     if (answer === '') {
-      const random = Math.floor(Math.random() * words.length - 1);
-      setAnswer(words[random]);
+      const random = Math.floor(Math.random() * answers.length - 1);
+      setAnswer(answers[random]);
     }
   }, [setAnswer, answer]);
 
