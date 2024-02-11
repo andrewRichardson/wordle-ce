@@ -1,11 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './Wordle';
+import { Wordle } from './Wordle';
 
 test('renders wordle', () => {
-  render(<App />);
+  render(<Wordle />);
   const wordleElement = screen.getByText(/Wordle/i);
-  const customElement = screen.getByText(/(custom edition)/i);
+  const customElement = screen.getByText(/(ce)/i);
   expect(wordleElement).toBeInTheDocument();
   expect(customElement).toBeInTheDocument();
 });
