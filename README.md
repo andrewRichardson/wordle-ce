@@ -1,6 +1,6 @@
-# Wordle _(custom edition)_
+# Wordle _(ce)_
 
-### A [Wordle](https://www.nytimes.com/games/wordle/index.html) clone with custom features.
+### A [Wordle](https://www.nytimes.com/games/wordle/index.html) game with custom features.
 
 <br />
 
