@@ -2,7 +2,7 @@
   "name": "wordle",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://andrewrichardson.github.io/wordle-dupe/",
+  "homepage": "https://andrewrichardson.github.io/wordle-ce/",
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "@testing-library/jest-dom": "^6.3.0",
