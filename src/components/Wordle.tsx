@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import words from '../data/words.json';
-import answers from '../data/answers.json';
+import wordsRaw from '../data/words.json';
+import answersRaw from '../data/answers.json';
 import { Evaluation, GAMEOVER_DELAY, GameState, MAX_GUESSES, WORD_LENGTH } from './types';
 import { Keyboard } from './Keyboard';
 import { useStats } from '../hooks/useStats';
@@ -58,14 +58,17 @@ export const Wordle = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.PLAYING);
   const { addGame } = useStats();
 
+  const answers = new Set(answersRaw);
+  const words = new Set(wordsRaw);
+
   const [board, setBoard] = useState<string[][]>(emptyBoard.map((row) => row.map((col) => col)));
   const [row, setRow] = useState<number>(0);
   const [col, setCol] = useState<number>(0);
 
   const evaluateGuess = () => {
-    const guess = board[row].join('');
+    const guess = board[row].join('').toLowerCase();
 
-    if (!words.includes(guess) && !answers.includes(guess)) {
+    if (!words.has(guess) && !answers.has(guess)) {
       // eslint-disable-next-line no-alert
       window.alert(`${guess} is not a word recognized by Wordle.`);
       return;
@@ -174,8 +177,8 @@ export const Wordle = () => {
 
   useEffect(() => {
     if (answer === '') {
-      const random = Math.floor(Math.random() * answers.length - 1);
-      setAnswer(answers[random]);
+      const random = Math.floor(Math.random() * answersRaw.length - 1);
+      setAnswer(answersRaw[random]);
     }
   }, [setAnswer, answer]);
 
