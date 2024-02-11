@@ -5,7 +5,7 @@ import { Wordle } from './Wordle';
 test('renders wordle', () => {
   render(<Wordle />);
   const wordleElement = screen.getByText(/Wordle/i);
-  const customElement = screen.getByText(/(custom edition)/i);
+  const customElement = screen.getByText(/(ce)/i);
   expect(wordleElement).toBeInTheDocument();
   expect(customElement).toBeInTheDocument();
 });
