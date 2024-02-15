@@ -113,7 +113,7 @@ export const Wordle = () => {
     setEvaluations([...evaluations, evaluation]);
 
     evaluation.forEach((evaluation: Evaluation, index: number) => {
-      const key = guess[index];
+      const key = guess[index].toUpperCase();
       const currentEval = keys.get(key) ?? 0;
       if (currentEval === undefined || currentEval > evaluation) return;
 
@@ -184,7 +184,14 @@ export const Wordle = () => {
 
   useEffect(() => {
     if (gameState !== GameState.PLAYING) {
-      setTimeout(() => addGame(gameState === GameState.WON, row), GAMEOVER_DELAY);
+      setTimeout(() => {
+        const win = 'Nice job!\n\nThe word is: ';
+        const lose = 'Game over!\n\nThe word was: ';
+        const message = `${gameState === GameState.WON ? win : lose}${answer.toUpperCase()}`;
+        // eslint-disable-next-line no-alert
+        window.alert(message);
+        setTimeout(() => addGame(gameState === GameState.WON, row), GAMEOVER_DELAY);
+      }, GAMEOVER_DELAY);
     }
   }, [gameState]);
 
