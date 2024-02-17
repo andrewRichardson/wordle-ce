@@ -104,12 +104,15 @@ export const Wordle = () => {
         }
 
         for (let i = 0; i < guess.length; i += 1) {
+            if (evaluation[i] === Evaluation.CORRECT) continue;
+
             const letter = guess.charAt(i);
 
             const lettersLeft = answerLetterMap.get(letter);
-            if (lettersLeft && lettersLeft > 0 && evaluation[i] === Evaluation.WRONG) {
+
+            if (lettersLeft && evaluation[i] === Evaluation.WRONG) {
                 answerLetterMap.set(letter, lettersLeft - 1);
-                evaluation[i] = Evaluation.VALID_LETTER;
+                evaluation[i] = Evaluation.PRESENT;
             } else answerLetterMap.delete(letter);
         }
         setEvaluations([...evaluations, evaluation]);
