@@ -45,7 +45,7 @@
     "devDependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@types/jest": "^29.5.12",
-        "@types/node": "^20.11.24",
+        "@types/node": "^20.11.29",
         "@types/react": "^18.2.59",
         "@types/react-dom": "^18.2.19",
         "@types/styled-components": "^5.1.34",
